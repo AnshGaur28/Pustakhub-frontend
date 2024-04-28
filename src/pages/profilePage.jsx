@@ -1,26 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState  } from "react";
+import {useNavigate} from 'react-router-dom';
 import axios from "axios";
 import Footer from '../components/footer.jsx'
 export default function Profile() {
-  const [user, setUser] = useState([]);
+  // const [user, setUser] = useState(null);
+  const [profile , setProfile] = useState(null);
+  const navigate = useNavigate();
   useEffect(() => {
     const getProfile = async () => {
       const jwt = sessionStorage.getItem("token");
-      const response = await axios.get(`http://localhost:80/api/getUser`, {
+      // const response = await axios.get(`http://localhost:80/api/getUser`, {
+      //   headers: {
+      //     Authorization: `Bearer ${jwt}`,
+      //   },
+      // });
+      // const user = response.data.user;
+      // console.log(user);
+      // setUser(user);
+      const responseData = await axios.get(`http://localhost:80/api/getUserProfile`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
       });
-      const user = response.data.user;
-      setUser(user);
-      console.log(user);
-      // const userProfile = await axios.get(`http://localhost:80/profile/${user._id}`);
+      const Data = responseData.data.profile[0] ;
+      console.log(Data);
+      setProfile(Data);
     };
     getProfile();
   }, []);
+  const handleEditProfile = async()=>{
+    navigate('/editProfile');
+  }
   return (
     <div className="min-h-screen">
-      <div className="header flex flex-row justify-center items-center  text-white bg-[#A79277] w-full items-start p-3 font-semibold text-lg ">
+      <div className="header flex flex-row justify-center items-center  text-white bg-[#222831] w-full items-start p-3 font-semibold text-lg ">
         <div className="ml-5 flex items-center w-1/2 space-x-20 ">
           <div>
             <svg
@@ -42,7 +55,7 @@ export default function Profile() {
             <input
               type="text"
               placeholder="Search"
-              className="w-[300px] p-2 border-gray-400 rounded-lg border-2"
+              className="w-[300px] p-2 border-gray-400 rounded-lg text-black border-2"
             />
           </div>
         </div>
@@ -99,11 +112,11 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <div className="flex h-full bg-[#EAD8C0] border-2 border-black">
+      <div className="flex h-full bg-gray-200 border-2 border-black">
         <div className="w-1/2  items-start flex  ">
           <div className="flex flex-col items-center justify-start h-full w-1/3 border-2 border-x-black  p-2">
             <div className=" flex flex-col justify-start rounded-lg w-full bg-white  my-10  bg-[#EAD8C0] ">
-              <div className="flex flex-row justify-start items-center ">
+              <div className=" mx-2 flex flex-row justify-start items-center ">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -123,13 +136,14 @@ export default function Profile() {
                     d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
                   />
                 </svg>
-                <h1 className="px-2 mx-2 font-bold  text-xl">Location</h1>
+                <h1 className="mx-1 font-bold text-xl">locations</h1>
               </div>
 
-              <div className="mx-2 p-2 text-md text-gray-500 font-semibold">
-                <div>1439 , Berkley Street</div>
-                <div>Brooklyn Central</div>
-                <div>NY</div>
+              <div className="mx-4 p-2 text-md text-gray-500 font-semibold">
+                 <div>{profile?.locations[0].city}</div>
+                <div>{profile?.locations[0].state}</div>
+                <div>{profile?.locations[0].pincode}</div> 
+                <div>{profile?.locations[0].locality}</div> 
               </div>
             </div>
             <div className=" flex flex-col justify-start  rounded-lg w-full bg-white  my-10 bg-[#EAD8C0]  ">
@@ -182,17 +196,17 @@ export default function Profile() {
               <div className="h-[250px] object-cover object-center overflow-hidden rounded-t-lg">
                 <img src="\src\assets\ian-dooley-DuBNA1QMpPA-unsplash.jpg" />
               </div>
-              <h1 className="text-4xl  font-bold ">{user.username} Gaur</h1>
+              <h1 className="text-4xl  font-bold ">{profile?.user?.username}</h1>
               <div className="text-gray-600  font-semibold p-5">
-                Email : {user.email}
+                Email : {profile?.user?.email}
               </div>
               <div className="text-gray-600 flex flex-row  items-center px-5 justify-between font-semibold">
                 <div className="text-gray-600  font-semibold p-5">
-                  Mobile : {user.mobile}{" "}
+                  Mobile : {profile?.user?.mobile}{" "}
                 </div>
                 <div className="border-2 border-gray-600 h-10"></div>
                 <div className="text-gray-600  font-semibold p-5">
-                  Role : {user.role}{" "}
+                  Role : {profile?.user?.role}{" "}
                 </div>
               </div>
             </div>
@@ -204,12 +218,12 @@ export default function Profile() {
               About Me
             </div>
             <div className="w-1/2 flex justify-end m-2  font-semibold ">
-              <button className="bg-[#58A399] text-white p-3 rounded">
+              <button className="bg-[#58A399] text-white p-3 rounded" onClick={handleEditProfile}>
                 Edit portfolio{" "}
               </button>
             </div>
           </div>
-          <div className=" m-2 flex justify-start p-3 items-center border-2 h-[300px]  bg-[#F8F6E3] rounded-xl">
+          <div className=" m-2 flex justify-start p-3 items-center border-2 h-[300px]  bg-white rounded-xl">
           </div>
         </div>
       </div>
